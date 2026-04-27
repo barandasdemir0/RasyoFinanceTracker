@@ -5,26 +5,25 @@ namespace FinancialTracker.API.Repositories;
 
 public interface ITrackedAssetRepository
 {
-    //listeleme ve getirme metotları IReadOnlyList kullanarak içine veri eklemesini engelledim
+    // Using IReadOnlyList to prevent accidental additions/modifications from the service layer
     Task<IReadOnlyList<TrackedAsset>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    //en son fiyatları getiren metot
+    // Optimized for dashboard: fetches all assets but only maps their latest price
     Task<IReadOnlyList<AssetWithLatestPriceResult>> GetAllWithLatestPriceAsync(CancellationToken cancellationToken);
 
     Task<TrackedAsset?> GetBySymbolAsync(string symbol, CancellationToken cancellationToken = default);
 
-    //dashboard için geçmişleriyle birlikte getirme
-
+    // Pulls the asset with its full price history 
     Task<TrackedAsset?> GetByIdWithSnapshotAsync(Guid id, CancellationToken cancellationToken = default);
 
-    //ekleme güncelleme
+  
     Task AddAsync(TrackedAsset trackedAsset, CancellationToken cancellationToken = default);
     void Update(TrackedAsset trackedAsset);
 
-    //yeni fiyatı ekleme
+    // Appends a new price point history without modifying the parent asset
     Task AddSnapshotAsync(PriceSnapshot snapshot, CancellationToken cancellationToken = default);
 
-    //kaydetme
+
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 
 }

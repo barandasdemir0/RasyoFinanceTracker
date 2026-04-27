@@ -31,11 +31,14 @@ public class TrackedAssetRepository : ITrackedAssetRepository
 
     public async Task<IReadOnlyList<TrackedAsset>> GetAllAsync(CancellationToken cancellationToken = default)
     {
+        // AsNoTracking used for read-only performance
         return await _appDbContext.TrackedAssets.AsNoTracking().ToListAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<AssetWithLatestPriceResult>> GetAllWithLatestPriceAsync(CancellationToken cancellationToken)
     {
+
+        // Using projection (.Select) to avoid pulling thousands of historical prices into memory
         return await _appDbContext.TrackedAssets
             .AsNoTracking()
             .Select(asset => new AssetWithLatestPriceResult(
