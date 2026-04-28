@@ -29,6 +29,11 @@ public class TrackedAssetRepository : ITrackedAssetRepository
         await _appDbContext.PriceSnapshots.AddAsync(snapshot, cancellationToken);
     }
 
+    public void Delete(TrackedAsset trackedAsset)
+    {
+        _appDbContext.TrackedAssets.Remove(trackedAsset);
+    }
+
     public async Task<IReadOnlyList<TrackedAsset>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         // AsNoTracking used for read-only performance

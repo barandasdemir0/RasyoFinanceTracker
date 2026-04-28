@@ -1,5 +1,6 @@
 ﻿using FinancialTracker.API.Data;
 using FinancialTracker.API.Repositories;
+using FinancialTracker.API.Services;
 using FinancialTracker.API.Services.External;
 using FinancialTracker.API.Validators;
 using FluentValidation;
@@ -31,6 +32,8 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssemblyContaining<AddAssetRequestDtoValidator>();
+        services.AddScoped<IPortfolioService, PortfolioService>();
+
         return services;
 
     }

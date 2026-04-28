@@ -19,6 +19,7 @@ public interface ITrackedAssetRepository
   
     Task AddAsync(TrackedAsset trackedAsset, CancellationToken cancellationToken = default);
     void Update(TrackedAsset trackedAsset);
+    void Delete(TrackedAsset trackedAsset);
 
     // Appends a new price point history without modifying the parent asset
     Task AddSnapshotAsync(PriceSnapshot snapshot, CancellationToken cancellationToken = default);
