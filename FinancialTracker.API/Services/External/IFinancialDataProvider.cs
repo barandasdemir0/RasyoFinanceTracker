@@ -2,8 +2,9 @@
 
 
 // DESIGN PATTERN: Strategy Pattern
-// WHY: Defines a common contract for external financial data providers. 
-// It allows us to easily swap out Finnhub for AlphaVantage or any other API in the future without modifying our business logic.
+// WHY: We used the Strategy Pattern to abstract the external financial API logic. 
+// If we decide to switch from Finnhub to AlphaVantage in the future, we only need to write a new class 
+// implementing this interface, without touching the PortfolioService.
 public interface IFinancialDataProvider
 {
     //It takes the stock symbol (e.g., AAPL) and returns the current price in decimal format.

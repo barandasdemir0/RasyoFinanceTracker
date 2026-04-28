@@ -38,7 +38,7 @@ public class FinnhubDataProvider : IFinancialDataProvider
             if (!document.RootElement.TryGetProperty("c", out var priceElement) || priceElement.GetDecimal() == 0)
             {
                 _logger.LogWarning("Finnhub returned zero or missing price for {Symbol}. Response: {Content}", symbol, content);
-                throw new ExternalApiException($"Invalid or zero price returned for symbol: {symbol}");
+                throw new InvalidOperationException($"The symbol '{symbol}' you entered is invalid or not found on the stock market.");
             }
             return priceElement.GetDecimal();
         }

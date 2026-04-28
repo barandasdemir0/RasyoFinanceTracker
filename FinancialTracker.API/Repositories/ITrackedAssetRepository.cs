@@ -2,7 +2,9 @@
 using FinancialTracker.API.Repositories.Models;
 
 namespace FinancialTracker.API.Repositories;
-
+// DESIGN PATTERN: Repository Pattern
+// WHY: We used the Repository Pattern to abstract the Entity Framework Core database operations. 
+// This decouples our business logic from the data access framework, making the code easier to test and maintain.
 public interface ITrackedAssetRepository
 {
     // Using IReadOnlyList to prevent accidental additions/modifications from the service layer
