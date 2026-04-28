@@ -1,6 +1,8 @@
 ﻿using FinancialTracker.API.Data;
 using FinancialTracker.API.Repositories;
 using FinancialTracker.API.Services.External;
+using FinancialTracker.API.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -29,7 +31,7 @@ public static class DependencyInjection
             client.DefaultRequestHeaders.Add("X-Finnhub-Token", settings.ApiKey);
         });
 
-
+        services.AddValidatorsFromAssemblyContaining<AddAssetRequestDtoValidator>();
         return services;
 
     }
