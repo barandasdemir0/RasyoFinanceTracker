@@ -11,4 +11,8 @@ public class DashboardAssetResponseDto
 
     public decimal TotalValue { get; set; }
     public decimal? ProfitLoss { get; set; }
+
+    public decimal? TargetPrice { get; set; }
+    public bool IsNearTarget { get; set; }
+    public bool IsWatchlistOnly { get; set; }
 }

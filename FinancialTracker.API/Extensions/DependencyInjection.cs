@@ -28,7 +28,6 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(settings.BaseUrl);
             client.Timeout = TimeSpan.FromSeconds(10);
 
-            client.DefaultRequestHeaders.Add("X-Finnhub-Token", settings.ApiKey);
         });
 
         services.AddValidatorsFromAssemblyContaining<AddAssetRequestDtoValidator>();
