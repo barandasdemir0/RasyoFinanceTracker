@@ -45,7 +45,7 @@ public class AssetsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("id:guid")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsset(Guid id,CancellationToken cancellationToken)
     {
         await _portfolioService.DeleteAssetAsync(id, cancellationToken);

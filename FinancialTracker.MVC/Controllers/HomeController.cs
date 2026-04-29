@@ -1,16 +1,22 @@
-using FinancialTracker.MVC.Models;
+using FinancialTracker.MVC.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace FinancialTracker.MVC.Controllers
+namespace FinancialTracker.MVC.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
+    private readonly IApiClientService _apiClientService;
 
-       
+    public HomeController(IApiClientService apiClientService)
+    {
+        _apiClientService = apiClientService;
     }
+
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        var dashboardData = await _apiClientService.GetDashboardDataAsync(cancellationToken);
+        return View(dashboardData);
+    }
+
+   
 }
