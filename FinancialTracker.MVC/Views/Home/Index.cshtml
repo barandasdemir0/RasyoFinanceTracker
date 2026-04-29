@@ -50,15 +50,23 @@
             <section class="stats-grid">
                 <div class="stat-card glass-panel">
                     <h3>Total Value</h3>
-                    <h2 class="value highlight-blue">$12,450.00</h2>
+                    <h2 class="value highlight-blue">$@Model.TotalValue.ToString("N2")</h2>
                 </div>
                 <div class="stat-card glass-panel">
                     <h3>Total Profit</h3>
-                    <h2 class="value highlight-green">+$1,230.50</h2>
+                    @if (Model.TotalProfit >= 0)
+                    {
+                        <h2 class="value highlight-green">+$@Model.TotalProfit.ToString("N2")</h2>
+                    }
+                    else
+                    {
+                        <h2 class="value highlight-red">-$@Math.Abs(Model.TotalProfit).ToString("N2")</h2>
+                    }
+                   
                 </div>
                 <div class="stat-card glass-panel">
                     <h3>Radar Alerts</h3>
-                    <h2 class="value highlight-red">1 Asset</h2>
+                    <h2 class="value highlight-red">@Model.NearTargetCount Asset</h2>
                 </div>
             </section>
 
@@ -88,29 +96,80 @@
                             <th>Target Price</th>
                             <th>P/L</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="assetsBody">
-                        <tr>
-                            <td class="font-bold">AAPL</td>
-                            <td><span class="badge badge-stock">Stock</span></td>
-                            <td>10</td>
-                            <td>$150.00</td>
-                            <td class="font-bold">$180.00</td>
-                            <td>$200.00</td>
-                            <td class="text-green">+$300.00</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td class="font-bold">TSLA</td>
-                            <td><span class="badge badge-stock">Stock</span></td>
-                            <td>0</td>
-                            <td>-</td>
-                            <td class="font-bold">$162.00</td>
-                            <td>$160.00</td>
-                            <td>-</td>
-                            <td><span class="badge badge-alert">Near Target!</span></td>
-                        </tr>
+                        @foreach (var asset in Model.Assets)
+                        {
+                            <tr>
+                                <td class="font-bold">@asset.Symbol</td>
+                                <td><span class="badge badge-stock">@asset.AssetType</span></td>
+                                <td>@asset.Quantity</td>
+                                <td>
+                                    @if (asset.AverageCost.HasValue)
+                                    {
+                                        <span>$@asset.AverageCost.Value.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                          
+                                </td>
+                                <td class="font-bold">$@asset.CurrentPrice.ToString("N2")</td>
+                                <td>
+                                    @if (asset.TargetPrice.HasValue)
+                                    {
+                                        <span>$@asset.TargetPrice.Value.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+
+                                   
+                                    
+                                </td>
+                                <td class="text-green">
+                                    @if (asset.ProfitLoss.HasValue && asset.ProfitLoss.Value >= 0)
+                                    {
+                                        <span class="text-green">+$@asset.ProfitLoss.Value.ToString("N2")</span>
+                                    }
+                                    else if (asset.ProfitLoss.HasValue && asset.ProfitLoss.Value < 0)
+                                    {
+                                        <span class="text-red">-$@Math.Abs(asset.ProfitLoss.Value).ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (asset.IsNearTarget)
+                                    {
+                                        <span class="badge badge-alert">Near Target!</span>
+                                    }
+                                    else if (asset.IsWatchlistOnly)
+                                    {
+                                        <span class="badge">Watching</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <!-- Delete -->
+                                <td>
+                                    <form action="/Home/Delete" method="POST">
+                                        <input type="hidden" name="id" value="@asset.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+
+                       
                     </tbody>
                 </table>
             </section>
@@ -133,7 +192,8 @@
                     <label>Asset Type</label>
                     <select name="AssetType">
                         <option value="10">Stock</option>
-                        <option value="20">Crypto</option>
+                        <option value="20">Forex</option>
+                        <option value="30">Crypto</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -154,7 +214,6 @@
             </form>
         </div>
     </div>
-
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/Frontend/script.js"></script>
