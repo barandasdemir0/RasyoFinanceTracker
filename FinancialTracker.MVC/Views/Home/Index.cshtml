@@ -2,7 +2,156 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasyonet | Financial Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Frontend/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <h2>Rasyonet<span>.</span></h2>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="#" class="nav-item">Portfolio</a>
+                <a href="#" class="nav-item">Watchlist</a>
+                <a href="#" class="nav-item">Settings</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1>Overview</h1>
+                    <p class="subtitle">Welcome back, Ahmet. Here is your portfolio summary.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="refreshBtn">Sync Prices</button>
+                    <button class="btn btn-secondary" id="openModalBtn">+ Add Asset</button>
+                </div>
+            </header>
+
+            <!-- STATS CARDS -->
+            <section class="stats-grid">
+                <div class="stat-card glass-panel">
+                    <h3>Total Value</h3>
+                    <h2 class="value highlight-blue">$12,450.00</h2>
+                </div>
+                <div class="stat-card glass-panel">
+                    <h3>Total Profit</h3>
+                    <h2 class="value highlight-green">+$1,230.50</h2>
+                </div>
+                <div class="stat-card glass-panel">
+                    <h3>Radar Alerts</h3>
+                    <h2 class="value highlight-red">1 Asset</h2>
+                </div>
+            </section>
+
+            <!-- CHART SECTION -->
+            <section class="chart-section glass-panel">
+                <div class="table-header">
+                    <h3>Portfolio Value (Last 7 Days)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+            </section>
+
+            <!-- ASSETS TABLE -->
+            <section class="table-section glass-panel">
+                <div class="table-header">
+                    <h3>Tracked Assets</h3>
+                </div>
+                <table class="assets-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Qty</th>
+                            <th>Avg Cost</th>
+                            <th>Current Price</th>
+                            <th>Target Price</th>
+                            <th>P/L</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assetsBody">
+                        <tr>
+                            <td class="font-bold">AAPL</td>
+                            <td><span class="badge badge-stock">Stock</span></td>
+                            <td>10</td>
+                            <td>$150.00</td>
+                            <td class="font-bold">$180.00</td>
+                            <td>$200.00</td>
+                            <td class="text-green">+$300.00</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">TSLA</td>
+                            <td><span class="badge badge-stock">Stock</span></td>
+                            <td>0</td>
+                            <td>-</td>
+                            <td class="font-bold">$162.00</td>
+                            <td>$160.00</td>
+                            <td>-</td>
+                            <td><span class="badge badge-alert">Near Target!</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- ADD ASSET MODAL -->
+    <div id="addModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Add New Asset</h2>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <form action="/Home/Add" method="POST" class="add-form">
+                <div class="form-group">
+                    <label>Symbol</label>
+                    <input type="text" name="Symbol" placeholder="e.g. AAPL" required>
+                </div>
+                <div class="form-group">
+                    <label>Asset Type</label>
+                    <select name="AssetType">
+                        <option value="10">Stock</option>
+                        <option value="20">Crypto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" name="Quantity" placeholder="e.g. 10" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Average Cost</label>
+                    <input type="number" name="AverageCost" placeholder="e.g. 150.50" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Target Price</label>
+                    <input type="number" name="TargetPrice" placeholder="e.g. 200.00" step="0.01">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Asset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/Frontend/script.js"></script>
+</body>
+</html>
