@@ -1,4 +1,4 @@
-﻿@model List<DashboardViewModel>
+﻿@model DashboardPageViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -23,7 +23,7 @@
                 <h2>Rasyonet<span>.</span></h2>
             </div>
             <nav>
-                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="/" class="nav-item active">Dashboard</a>
                 <a href="#" class="nav-item">Portfolio</a>
                 <a href="#" class="nav-item">Watchlist</a>
                 <a href="#" class="nav-item">Settings</a>
@@ -38,7 +38,10 @@
                     <p class="subtitle">Welcome back, Rasyonet HR. Here is your portfolio summary.</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="refreshBtn">Sync Prices</button>
+                    <form asp-controller="Home" asp-action="Sync" method="post">
+                        <button type="submit" class="btn btn-primary" id="refreshBtn">Sync Prices</button>
+                    </form>
+                   
                     <button class="btn btn-secondary" id="openModalBtn">+ Add Asset</button>
                 </div>
             </header>

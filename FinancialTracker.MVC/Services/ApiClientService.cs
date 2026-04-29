@@ -51,30 +51,44 @@ public class ApiClientService : IApiClientService
         }
     }
 
-    public async Task<List<DashboardViewModel>> GetDashboardDataAsync(CancellationToken cancellationToken = default)
+    public async Task<DashboardPageViewModel> GetDashboardDataAsync(CancellationToken cancellationToken = default)
     {
+
+        var viewModel = new DashboardPageViewModel();
         try
         {
             var response = await _httpClient.GetAsync("assets/dashboard", cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("API returned unsuccessful status code: {StatusCode}", response.StatusCode);
-                return new List<DashboardViewModel>();
+                return viewModel;
             }
 
             var data = await response.Content.ReadFromJsonAsync<List<DashboardViewModel>>(cancellationToken: cancellationToken);
             if (data==null)
             {
-                return new List<DashboardViewModel>();
+                return viewModel;
+            }
+            viewModel.Assets = data;
+            viewModel.TotalValue = data.Sum(a => a.TotalValue);
+            viewModel.NearTargetCount = data.Count(a => a.IsNearTarget);
+
+            foreach (var asset in data)
+            {
+                if (asset.ProfitLoss.HasValue)
+                {
+                    viewModel.TotalProfit += asset.ProfitLoss.Value;
+                }
             }
 
-            return data;
+            return viewModel;
+
 
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "A critical error occurred while communicating with the API.");
-            return new List<DashboardViewModel>();
+            return viewModel;
         }
     }
 
