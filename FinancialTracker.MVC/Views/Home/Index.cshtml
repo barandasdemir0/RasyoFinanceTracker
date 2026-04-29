@@ -191,9 +191,10 @@
                 <div class="form-group">
                     <label>Asset Type</label>
                     <select name="AssetType">
-                        <option value="10">Stock</option>
-                        <option value="20">Forex</option>
-                        <option value="30">Crypto</option>
+                        @foreach (var type in Model.AssetTypes)
+                        {
+                            <option value="@type.Value">@type.Name</option>
+                        }
                     </select>
                 </div>
                 <div class="form-group">

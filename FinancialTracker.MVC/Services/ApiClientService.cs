@@ -65,7 +65,7 @@ public class ApiClientService : IApiClientService
             }
 
             var data = await response.Content.ReadFromJsonAsync<List<DashboardViewModel>>(cancellationToken: cancellationToken);
-            if (data==null)
+            if (data == null)
             {
                 return viewModel;
             }
@@ -80,6 +80,25 @@ public class ApiClientService : IApiClientService
                     viewModel.TotalProfit += asset.ProfitLoss.Value;
                 }
             }
+
+            viewModel.AssetTypes = new List<AssetTypeOption>
+            {
+                    new AssetTypeOption 
+                    { 
+                        Value = 10, 
+                        Name = "Stock" 
+                    },
+                    new AssetTypeOption 
+                    { 
+                        Value = 20, 
+                        Name = "Forex"
+                    },
+                    new AssetTypeOption 
+                    { 
+                        Value = 30,
+                        Name = "Crypto" 
+                    }
+            };
 
             return viewModel;
 
