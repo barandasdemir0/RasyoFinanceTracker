@@ -58,3 +58,42 @@ We also strictly follow the **"Smart Backend, Dumb Frontend"** philosophy. The M
 ## 🧪 Testing
 The project includes meaningful Unit Tests targeting the core business logic.
 - **`AssetMappingExtensionsTests`**: Verifies that the mathematical logic for calculating Profit/Loss (P&L), Total Value, and Target Proximity (Radar Alerts) works flawlessly independent of any database or external service.
+
+---
+
+## 🚀 How to Run (Docker)
+
+The application is completely containerized for a seamless developer experience.
+
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+- [Git](https://git-scm.com/) installed.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/barandasdemir0/RasyoFinanceTracker.git
+cd RasyoFinanceTracker
+```
+
+### 2. Configure the API Key (Crucial Step)
+The project strictly enforces security best practices by excluding sensitive keys from version control. You must provide your own Finnhub API Key.
+
+Create a file named **exactly** `.env` in the root directory (the same folder as `docker-compose.yml`) and add your key:
+```env
+FINNHUB_API_KEY=your_20_character_finnhub_key_here
+```
+*(Note for Windows Users: Ensure the file has no hidden trailing spaces and is saved in UTF-8 format).*
+
+### 3. Spin Up the Environment
+```bash
+docker-compose up --build -d
+```
+*This command will:*
+- Download the SQL Server 2022 image and start the database.
+- Build the .NET API and run Entity Framework Auto-Migrations to create the tables.
+- Build the MVC Frontend and start the web server.
+- Connect the SignalR tunnels.
+
+### 4. Access the Dashboard
+Once the terminal confirms the containers are running, open your browser and navigate to:
+👉 **[http://localhost:7163](http://localhost:7163)**
