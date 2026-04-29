@@ -10,6 +10,7 @@ services:
       - "1433:1433"
 
   api:
+    restart: on-failure
     build:
       context: ./FinancialTracker.API
       dockerfile: Dockerfile
@@ -24,6 +25,7 @@ services:
       - MvcSettings__BaseUrl=http://localhost:7163
 
   mvc:
+    restart: on-failure
     build:
       context: ./FinancialTracker.MVC
       dockerfile: Dockerfile
