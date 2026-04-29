@@ -24,13 +24,13 @@ public class PortfolioService : IPortfolioService
     {
         var normalizedSymbol = requestDto.Symbol.Trim().ToUpper();
 
-        var currentAsset = await _repository.GetBySymbolAsync(normalizedSymbol, cancellationToken);
-        if (currentAsset != null)
+        var existingAsset = await _repository.GetBySymbolAsync(normalizedSymbol, cancellationToken);
+        if (existingAsset != null)
         {
             throw new InvalidOperationException($"Asset with symbol {normalizedSymbol} is already being tracked.");
         }
 
-        var currentPrice = await _financialDataProvider.GetCurrentPriceAsync(normalizedSymbol, cancellationToken);
+        var priceResult = await _financialDataProvider.GetCurrentPriceAsync(normalizedSymbol, cancellationToken);
 
         var newAsset = requestDto.ToEntity(normalizedSymbol);
 
@@ -38,13 +38,15 @@ public class PortfolioService : IPortfolioService
         var initialSnapshot = new PriceSnapshot
         {
             TrackedAssetId = newAsset.Id,
-            Price = currentPrice
+            Price = priceResult.CurrentPrice,
+            DailyHigh = priceResult.DailyHigh,
+            DailyLow = priceResult.DailyLow
         };
 
         await _repository.AddSnapshotAsync(initialSnapshot, cancellationToken);
         await _repository.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Successfully added new asset {Symbol} at price {Price}", normalizedSymbol, currentPrice);
+        _logger.LogInformation("Successfully added new asset {Symbol} at price {Price}", normalizedSymbol, priceResult);
 
     }
 
@@ -85,12 +87,14 @@ public class PortfolioService : IPortfolioService
         {
             try
             {
-                var price = await _financialDataProvider.GetCurrentPriceAsync(asset.Symbol, cancellationToken);
+                var priceResult = await _financialDataProvider.GetCurrentPriceAsync(asset.Symbol, cancellationToken);
 
                 return new PriceSnapshot
                 {
                     TrackedAssetId = asset.Id,
-                    Price = price
+                    Price = priceResult.CurrentPrice,
+                    DailyHigh = priceResult.DailyHigh,
+                    DailyLow = priceResult.DailyLow
                 };
             }
             catch (ExternalApiException ex)

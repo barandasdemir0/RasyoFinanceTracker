@@ -1,4 +1,6 @@
-﻿namespace FinancialTracker.API.Services.External;
+﻿using FinancialTracker.API.DTOs;
+
+namespace FinancialTracker.API.Services.External;
 
 
 // DESIGN PATTERN: Strategy Pattern
@@ -8,5 +10,5 @@
 public interface IFinancialDataProvider
 {
     //It takes the stock symbol (e.g., AAPL) and returns the current price in decimal format.
-    Task<decimal> GetCurrentPriceAsync(string symbol, CancellationToken cancellationToken=default);
+    Task<AssetPriceResult> GetCurrentPriceAsync(string symbol, CancellationToken cancellationToken=default);
 }

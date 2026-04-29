@@ -1,4 +1,5 @@
-﻿using FinancialTracker.API.Exceptions;
+﻿using FinancialTracker.API.DTOs;
+using FinancialTracker.API.Exceptions;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -17,7 +18,7 @@ public class FinnhubDataProvider : IFinancialDataProvider
         _settings = options.Value;
     }
 
-    public async Task<decimal> GetCurrentPriceAsync(string symbol, CancellationToken cancellationToken)
+    public async Task<AssetPriceResult> GetCurrentPriceAsync(string symbol, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Fetching current price for {Symbol} from Finnhub...", symbol);
         try
@@ -40,7 +41,34 @@ public class FinnhubDataProvider : IFinancialDataProvider
                 _logger.LogWarning("Finnhub returned zero or missing price for {Symbol}. Response: {Content}", symbol, content);
                 throw new InvalidOperationException($"The symbol '{symbol}' you entered is invalid or not found on the stock market.");
             }
-            return priceElement.GetDecimal();
+            decimal CurrentPrice = priceElement.GetDecimal();
+
+            decimal? dailyHigh = null;
+
+            if (document.RootElement.TryGetProperty("h", out var h) && h.ValueKind != JsonValueKind.Null && h.GetDecimal() != 0)
+            {
+
+                dailyHigh = h.GetDecimal();
+               
+            }
+            else
+            {
+                _logger.LogWarning("Finnhub returned zero or missing Daily High for {Symbol}. Setting to NULL.", symbol);
+            }
+            decimal? DailyLow = null;
+            if (document.RootElement.TryGetProperty("l",out var l) && l.ValueKind != JsonValueKind.Null && l.GetDecimal()!=0)
+            {
+                 DailyLow = l.GetDecimal();
+            }
+            else
+            {
+                _logger.LogWarning("Finnhub returned zero or missing Daily Low for {Symbol}. Setting to NULL.", symbol);
+            }
+
+            
+
+            return new AssetPriceResult(CurrentPrice, dailyHigh, DailyLow);
+
         }
         catch (ExternalApiException)
         {
