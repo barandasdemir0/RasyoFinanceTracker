@@ -20,7 +20,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=RasyonetTrackerDb;User Id=sa;Password=RasyonetDbPassword123!;TrustServerCertificate=True;
       # Finnhub API Key (.env dosyasından okur)
-      - Finnhub__ApiKey=${FINNHUB_API_KEY}
+      - FinnhubSettings__ApiKey=${FINNHUB_API_KEY}
       # CORS Hatasını çözen satır:
       - MvcSettings__BaseUrl=http://localhost:7163
 
