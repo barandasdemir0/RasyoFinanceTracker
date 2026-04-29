@@ -34,6 +34,27 @@ public static class DependencyInjection
         services.AddValidatorsFromAssemblyContaining<AddAssetRequestDtoValidator>();
         services.AddScoped<IPortfolioService, PortfolioService>();
 
+        services.AddSignalR();
+        services.AddHostedService<PriceRefreshBackgroundService>();
+
+
+        var origin = configuration["MvcSettings:BaseUrl"];
+
+        if (string.IsNullOrEmpty(origin))
+        {
+            throw new Exception("MvcSettings:BaseUrl is missing!");
+        }
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowMvc", policy =>
+            {
+                policy.WithOrigins(origin).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+            });
+        });
+
+
+
         return services;
 
     }

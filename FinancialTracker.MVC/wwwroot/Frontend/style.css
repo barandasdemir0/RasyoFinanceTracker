@@ -173,3 +173,82 @@ nav { display: flex; flex-direction: column; gap: 0.8rem; }
 }
 
 .modal-footer { margin-top: 0.5rem; text-align: right; }
+
+/* =========================================================
+   RESPONSIVE DESIGN (MOBİL VE TABLET UYUMU)
+   ========================================================= */
+
+/* Tabletler ve Küçük Ekranlar (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .app-container {
+        flex-direction: column; /* Yan yana değil, alt alta diz */
+    }
+
+    .sidebar {
+        width: auto; /* Sabit genişliği kaldır */
+        margin: 1rem;
+        padding: 1.5rem;
+        flex-direction: row; /* Menüleri yan yana diz */
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .sidebar nav {
+            flex-direction: row; /* Linkleri yan yana al */
+            gap: 1rem;
+        }
+
+    .logo h2 {
+        margin-bottom: 0; /* Boşluğu kaldır */
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+}
+
+/* Cep Telefonları (max-width: 768px) */
+@media (max-width: 768px) {
+    .sidebar {
+        flex-direction: column; /* Logoyu üste, menüyü alta al */
+        gap: 1rem;
+    }
+
+        .sidebar nav {
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap; /* Sığmazsa alta insin */
+        }
+
+    .top-header {
+        flex-direction: column; /* Başlık ve butonları alt alta al */
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: stretch; /* Butonları tam genişlik yap */
+    }
+
+    .btn {
+        flex: 1; /* Butonlar eşit genişlikte olsun */
+        text-align: center;
+    }
+
+    /* Tabloyu kaydırılabilir yap */
+    .table-section {
+        overflow-x: auto;
+    }
+
+    .assets-table {
+        min-width: 700px; /* Ekrana sığmasa da sıkışmasın, scroll çıksın */
+    }
+
+    /* Modal (Popup) mobilde tam ekran olsun */
+    .modal-content {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}
+

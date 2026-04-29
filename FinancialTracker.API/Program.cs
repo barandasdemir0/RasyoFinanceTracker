@@ -1,4 +1,5 @@
 using FinancialTracker.API.Extensions;
+using FinancialTracker.API.Hubs;
 using FinancialTracker.API.Middlewares;
 using Scalar.AspNetCore;
 
@@ -24,8 +25,17 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+app.UseCors("AllowMvc");
+
 app.UseAuthorization();
 
+
+
 app.MapControllers();
+app.MapHub<DashboardHub>("/hubs/dashboard");
+
+
 
 app.Run();

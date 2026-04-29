@@ -85,5 +85,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    // =============================================
+    // SignalR — Real-time Dashboard Updates
+    // Backend pushes a signal every 60 seconds after refreshing prices.
+    // We simply reload the page to let Razor re-render with fresh data.
+    // This keeps the frontend "dumb" — no DOM manipulation, no JS calculations.
+    // =============================================
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7111/hubs/dashboard")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.on("ReceiveDashboardUpdate", function () {
+        location.reload();
+    });
+
+    connection.start()
+        .then(function () {
+            console.log("SignalR: Connected to dashboard hub.");
+        })
+        .catch(function (err) {
+            console.error("SignalR: Connection failed — ", err);
+        });
+
 
 });
