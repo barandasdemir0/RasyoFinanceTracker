@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # 1. Veritabanı: Microsoft SQL Server
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=RasyonetDbPassword123! # Güçlü bir şifre olmalı
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql # Veriler silinmesin diye volume oluşturuyoruz
+
+  # 2. Backend: .NET 10 API
+  api:
+    build:
+      context: ./FinancialTracker.API
+      dockerfile: Dockerfile
+    ports:
+      - "7147:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # ConnectionString'i eziyoruz. 'db' yazmamızın sebebi yukarıdaki servisin adının db olması!
+      - ConnectionStrings__DefaultConnection=Server=db;Database=RasyonetTrackerDb;User Id=sa;Password=RasyonetDbPassword123!;TrustServerCertificate=True;
+    depends_on:
+      - db
+
+  # 3. Frontend: .NET 10 MVC Dashboard
+  mvc:
+    build:
+      context: ./FinancialTracker.MVC
+      dockerfile: Dockerfile
+    ports:
+      - "7163:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # API'nin Docker içindeki adresi. 'api' yazdık çünkü üstteki servisin adı api
+      - ApiSettings__BaseUrl=http://api:8080/api/
+    depends_on:
+      - api
+
+volumes:
+  sql_data:

@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Project Path="FinancialTracker.API/FinancialTracker.API.csproj" />
   <Project Path="FinancialTracker.MVC/FinancialTracker.MVC.csproj" />
   <Project Path="FinancialTracker.Tests/FinancialTracker.Tests.csproj" Id="8a265d88-b0a2-4fcd-984a-712dc9eafcf1" />

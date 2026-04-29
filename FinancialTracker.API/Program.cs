@@ -36,6 +36,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<DashboardHub>("/hubs/dashboard");
 
-
+app.ApplyDatabaseMigrations();
 
 app.Run();
