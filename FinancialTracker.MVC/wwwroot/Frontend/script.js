@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =============================================
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7111/hubs/dashboard")
+        .withUrl(window.SIGNALR_HUB_URL) // ARTIK HARDCODED 7111 YOK!
         .withAutomaticReconnect()
         .build();
 
