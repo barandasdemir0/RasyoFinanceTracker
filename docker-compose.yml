@@ -18,8 +18,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=RasyonetTrackerDb;User Id=sa;Password=RasyonetDbPassword123!;TrustServerCertificate=True;
-      # 1. ÇÖZÜM: Kaydetmeme sorununu çözen API şifresi (.env dosyasından okur)
+      # Finnhub API Key (.env dosyasından okur)
       - Finnhub__ApiKey=${FINNHUB_API_KEY}
+      # CORS Hatasını çözen satır:
+      - MvcSettings__BaseUrl=http://localhost:7163
 
   mvc:
     build:
@@ -30,9 +32,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ApiSettings__BaseUrl=http://api:8080/api/
-      # 2. ÇÖZÜM: SignalR Kırmızı hatasını çözen dinamik adres
+      # SignalR Kırmızı hatasını çözen dinamik adres
       - SignalRHubUrl=http://localhost:7147/hubs/dashboard
-
 
 volumes:
   sql_data:
