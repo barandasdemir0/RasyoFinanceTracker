@@ -34,7 +34,7 @@ jobs:
           --arg fk "$FINNHUB_API_KEY" \
           '{
             "ConnectionStrings": { "DefaultConnection": $db },
-            "MvcSettings": { "BaseUrl": "http://rasyonettask.barandasdemir.com" },
+            "MvcSettings": { "BaseUrl": "https://rasyonettask.barandasdemir.com" },
             "FinnhubSettings": {
               "ApiKey": $fk,
               "BaseUrl": "https://finnhub.io/api/v1/"
@@ -49,8 +49,8 @@ jobs:
       run: |
         jq -n \
           '{
-            "ApiSettings": { "BaseUrl": "http://api.rasyonettask.barandasdemir.com/api/" },
-            "SignalRHubUrl": "http://api.rasyonettask.barandasdemir.com/hubs/dashboard",
+            "ApiSettings": { "BaseUrl": "https://api.rasyonettask.barandasdemir.com/api/" },
+            "SignalRHubUrl": "https://api.rasyonettask.barandasdemir.com/hubs/dashboard",
             "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } },
             "AllowedHosts": "*"
           }' > ./publish/mvc/appsettings.json
