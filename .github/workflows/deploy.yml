@@ -24,19 +24,48 @@ jobs:
     - name: 🏗️ Publish MVC
       run: dotnet publish FinancialTracker.MVC/FinancialTracker.MVC.csproj -c Release -o ./publish/mvc
 
-    - name: 🔐 Generate appsettings.Production.json for API
+    - name: 🔐 FORCE Overwrite API Settings
       env:
         PROD_DB_CONNECTION: ${{ secrets.PROD_DB_CONNECTION }}
         FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
       run: |
-        cat <<EOF > ./publish/api/appsettings.Production.json
+        cat <<EOF > ./publish/api/appsettings.json
         {
           "ConnectionStrings": {
             "DefaultConnection": "$PROD_DB_CONNECTION"
           },
+          "MvcSettings": {
+            "BaseUrl": "http://rasyonettask.barandasdemir.com"
+          },
           "FinnhubSettings": {
-            "ApiKey": "$FINNHUB_API_KEY"
-          }
+            "ApiKey": "$FINNHUB_API_KEY",
+            "BaseUrl": "https://finnhub.io/api/v1/"
+          },
+          "Logging": {
+            "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning"
+            }
+          },
+          "AllowedHosts": "*"
+        }
+        EOF
+
+    - name: 🔐 FORCE Overwrite MVC Settings
+      run: |
+        cat <<EOF > ./publish/mvc/appsettings.json
+        {
+          "ApiSettings": {
+            "BaseUrl": "http://api.rasyonettask.barandasdemir.com/api/"
+          },
+          "SignalRHubUrl": "http://api.rasyonettask.barandasdemir.com/hubs/dashboard",
+          "Logging": {
+            "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning"
+            }
+          },
+          "AllowedHosts": "*"
         }
         EOF
 
