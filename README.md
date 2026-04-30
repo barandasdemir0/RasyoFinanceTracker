@@ -20,9 +20,19 @@ The application allows users to:
 - **Validation:** FluentValidation
 - **Testing:** xUnit
 - **API Documentation:** Scalar OpenAPI (Modern UI natively supported in .NET 10)
+- **CI/CD:** GitHub Actions with LFTP deployment to Plesk
 
 ### 📊 External API Choice: Finnhub
 I chose **Finnhub** (`finnhub.io`) because it provides real-time quote data with a generous free tier (60 requests/minute). It seamlessly supports both standard stock tickers (e.g., `AAPL`) and cryptocurrency tickers (e.g., `BINANCE:BTCUSDT`), fitting perfectly with the polymorphic nature of the `AssetType` enum.
+
+---
+
+## 🌐 Live Demo
+
+The application is deployed and publicly accessible:
+
+- **Dashboard (MVC):** [https://rasyonettask.barandasdemir.com](https://rasyonettask.barandasdemir.com)
+- **API:** [https://api.rasyonettask.barandasdemir.com](https://api.rasyonettask.barandasdemir.com)
 
 ---
 
@@ -73,27 +83,3 @@ The application is completely containerized for a seamless developer experience.
 ```bash
 git clone https://github.com/barandasdemir0/RasyoFinanceTracker.git
 cd RasyoFinanceTracker
-```
-
-### 2. Configure the API Key (Crucial Step)
-The project strictly enforces security best practices by excluding sensitive keys from version control. You must provide your own Finnhub API Key.
-
-Create a file named **exactly** `.env` in the root directory (the same folder as `docker-compose.yml`) and add your key:
-```env
-FINNHUB_API_KEY=your_20_character_finnhub_key_here
-```
-*(Note for Windows Users: Ensure the file has no hidden trailing spaces and is saved in UTF-8 format).*
-
-### 3. Spin Up the Environment
-```bash
-docker-compose up --build -d
-```
-*This command will:*
-- Download the SQL Server 2022 image and start the database.
-- Build the .NET API and run Entity Framework Auto-Migrations to create the tables.
-- Build the MVC Frontend and start the web server.
-- Connect the SignalR tunnels.
-
-### 4. Access the Dashboard
-Once the terminal confirms the containers are running, open your browser and navigate to:
-👉 **[http://localhost:7163](http://localhost:7163)**
