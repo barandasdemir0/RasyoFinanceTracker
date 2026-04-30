@@ -1,89 +1,64 @@
 name: CI/CD Pipeline to Plesk (FTP)
-
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev", "main", "master" ]
   workflow_dispatch:
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
     - name: 📥 Checkout Code
       uses: actions/checkout@v5
-
     - name: ⚙️ Setup .NET 10
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '10.0.x'
-
     - name: 🏗️ Publish API
       run: dotnet publish FinancialTracker.API/FinancialTracker.API.csproj -c Release -o ./publish/api
-
     - name: 🏗️ Publish MVC
       run: dotnet publish FinancialTracker.MVC/FinancialTracker.MVC.csproj -c Release -o ./publish/mvc
-
-    - name: 🔐 FORCE Overwrite API Settings
+    - name: 🔐 Generate Secure API Settings
       env:
         PROD_DB_CONNECTION: ${{ secrets.PROD_DB_CONNECTION }}
         FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
       run: |
-        cat <<EOF > ./publish/api/appsettings.json
-        {
-          "ConnectionStrings": {
-            "DefaultConnection": "$PROD_DB_CONNECTION"
-          },
-          "MvcSettings": {
-            "BaseUrl": "http://rasyonettask.barandasdemir.com"
-          },
-          "FinnhubSettings": {
-            "ApiKey": "$FINNHUB_API_KEY",
-            "BaseUrl": "https://finnhub.io/api/v1/"
-          },
-          "Logging": {
-            "LogLevel": {
-              "Default": "Information",
-              "Microsoft.AspNetCore": "Warning"
-            }
-          },
-          "AllowedHosts": "*"
-        }
-        EOF
-
-    - name: 🔐 FORCE Overwrite MVC Settings
+        jq -n \
+          --arg db "$PROD_DB_CONNECTION" \
+          --arg fk "$FINNHUB_API_KEY" \
+          '{
+            "ConnectionStrings": { "DefaultConnection": $db },
+            "MvcSettings": { "BaseUrl": "http://rasyonettask.barandasdemir.com" },
+            "FinnhubSettings": {
+              "ApiKey": $fk,
+              "BaseUrl": "https://finnhub.io/api/v1/"
+            },
+            "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } },
+            "AllowedHosts": "*"
+          }' > ./publish/api/appsettings.json
+    - name: 🔐 Generate Secure MVC Settings
       run: |
-        cat <<EOF > ./publish/mvc/appsettings.json
-        {
-          "ApiSettings": {
-            "BaseUrl": "http://api.rasyonettask.barandasdemir.com/api/"
-          },
-          "SignalRHubUrl": "http://api.rasyonettask.barandasdemir.com/hubs/dashboard",
-          "Logging": {
-            "LogLevel": {
-              "Default": "Information",
-              "Microsoft.AspNetCore": "Warning"
-            }
-          },
-          "AllowedHosts": "*"
-        }
-        EOF
-
-    - name: 🛠️ Install LFTP (For Fast & Reliable FTP)
-      run: sudo apt-get update && sudo apt-get install -y lftp
-
-    - name: 🚀 Deploy API
+        jq -n \
+          '{
+            "ApiSettings": { "BaseUrl": "http://api.rasyonettask.barandasdemir.com/api/" },
+            "SignalRHubUrl": "http://api.rasyonettask.barandasdemir.com/hubs/dashboard",
+            "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } },
+            "AllowedHosts": "*"
+          }' > ./publish/mvc/appsettings.json
+    - name: 🛠️ Install LFTP and Create app_offline
+      run: |
+        sudo apt-get update && sudo apt-get install -y lftp
+        echo "<h1>Site is currently being updated. Please check back in a minute.</h1>" > app_offline.htm
+    - name: 🚀 Deploy API (With Auto-Unlock)
       env:
         FTP_HOST: ${{ secrets.MY_FTP_HOST }}
         FTP_USER: ${{ secrets.MY_FTP_USER }}
         FTP_PASSWORD: ${{ secrets.MY_FTP_PASS }}
       run: |
-        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/api /api.rasyonettask.barandasdemir.com"
-
-    - name: 🚀 Deploy MVC
+        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; put app_offline.htm -o /api.rasyonettask.barandasdemir.com/app_offline.htm; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/api /api.rasyonettask.barandasdemir.com; rm /api.rasyonettask.barandasdemir.com/app_offline.htm"
+    - name: 🚀 Deploy MVC (With Auto-Unlock)
       env:
         FTP_HOST: ${{ secrets.MY_FTP_HOST }}
         FTP_USER: ${{ secrets.MY_FTP_USER }}
         FTP_PASSWORD: ${{ secrets.MY_FTP_PASS }}
       run: |
-        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/mvc /rasyonettask.barandasdemir.com"
+        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; put app_offline.htm -o /rasyonettask.barandasdemir.com/app_offline.htm; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/mvc /rasyonettask.barandasdemir.com; rm /rasyonettask.barandasdemir.com/app_offline.htm"
