@@ -42,14 +42,14 @@ jobs:
 
     - name: 🛠️ Install LFTP (For Fast & Reliable FTP)
       run: sudo apt-get update && sudo apt-get install -y lftp
- 
+
     - name: 🚀 Deploy API
       env:
         FTP_HOST: ${{ secrets.MY_FTP_HOST }}
         FTP_USER: ${{ secrets.MY_FTP_USER }}
         FTP_PASSWORD: ${{ secrets.MY_FTP_PASS }}
       run: |
-        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/api /api.rasyonet.com"
+        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/api /api.rasyonettask.barandasdemir.com"
 
     - name: 🚀 Deploy MVC
       env:
@@ -57,4 +57,4 @@ jobs:
         FTP_USER: ${{ secrets.MY_FTP_USER }}
         FTP_PASSWORD: ${{ secrets.MY_FTP_PASS }}
       run: |
-        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/mvc /httpdocs"
+        lftp -c "set ssl:verify-certificate no; set ftp:use-chmod no; open -u '$FTP_USER','$FTP_PASSWORD' '$FTP_HOST'; mirror -R -v --parallel=10 --no-perms --exclude-glob appsettings.Development.json ./publish/mvc /rasyonettask.barandasdemir.com"
